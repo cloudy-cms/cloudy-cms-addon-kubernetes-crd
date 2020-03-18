@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Cloudy.Cms.Addon.KubernetesCrd</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="KubeClient" Version="2.3.11" />
+    <PackageReference Include="KubeClient.Extensions.KubeConfig" Version="2.3.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\cloudy-cms\Cloudy.CMS\Cloudy.CMS.csproj" />
+  </ItemGroup>
+
+</Project>
