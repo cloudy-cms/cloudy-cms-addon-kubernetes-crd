@@ -1,4 +1,5 @@
 ﻿using Cloudy.CMS.DocumentSupport;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,9 +15,11 @@ namespace Cloudy.Cms.Addon.KubernetesCrd
     {
         IDocumentPropertyPathProvider DocumentPropertyPathProvider { get; }
         IDocumentPropertyFinder DocumentPropertyFinder { get; }
+        ILogger<DocumentFinderQueryBuilder> Logger { get; }
 
-        public DocumentFinderQueryBuilder(IClientProvider clientProvider, IDocumentPropertyPathProvider documentPropertyPathProvider, IDocumentPropertyFinder documentPropertyFinder)
+        public DocumentFinderQueryBuilder(ILogger<DocumentFinderQueryBuilder> logger, IClientProvider clientProvider, IDocumentPropertyPathProvider documentPropertyPathProvider, IDocumentPropertyFinder documentPropertyFinder)
         {
+            Logger = logger;
             DocumentPropertyPathProvider = documentPropertyPathProvider;
             DocumentPropertyFinder = documentPropertyFinder;
         }
@@ -92,6 +95,25 @@ namespace Cloudy.Cms.Addon.KubernetesCrd
 
         public async Task<IEnumerable<Document>> GetResultAsync()
         {
+            var body = new
+            {
+                apiVersion = "cloudy-cms.net/v1",
+                kind = $"cloudy{Container}",
+                metadata = new { name = document.Id },
+                spec = document
+            };
+
+            if (Logger.IsEnabled(LogLevel.Information))
+            {
+                Logger.LogInformation($"Sending to Kubernetes:\n\n{JsonConvert.SerializeObject(body)}");
+            }
+
+            var response = await Client.Http.PostAsync($"apis/cloudy-cms.net/v1/namespaces/default/cloudy{Container}", new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json")).ConfigureAwait(false);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"{(int)response.StatusCode} {response.ReasonPhrase}: {await response.Content.ReadAsStringAsync().ConfigureAwait(false)}");
+            }
             //var response = await Client.GetAsync($"{EndpointProvider.Endpoint}/{Container}").ConfigureAwait(false);
 
             //if (!response.IsSuccessStatusCode)

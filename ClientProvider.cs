@@ -1,4 +1,4 @@
-﻿using k8s;
+﻿using KubeClient;
 using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
@@ -8,14 +8,14 @@ namespace Cloudy.Cms.Addon.KubernetesCrd
 {
     public class ClientProvider : IClientProvider, IDisposable
     {
-        Kubernetes Client { get; }
+        KubeApiClient Client { get; }
 
         public ClientProvider(IClientCreator clientCreator)
         {
             Client = clientCreator.CreateClient();
         }
 
-        public Kubernetes GetClient()
+        public KubeApiClient GetClient()
         {
             return Client;
         }

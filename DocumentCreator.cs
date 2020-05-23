@@ -1,5 +1,6 @@
 ﻿using Cloudy.CMS.DocumentSupport;
 using KubeClient;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,11 @@ namespace Cloudy.Cms.Addon.KubernetesCrd
     public class DocumentCreator : IDocumentCreator
     {
         KubeApiClient Client { get; }
+        ILogger<DocumentCreator> Logger { get; }
 
-        public DocumentCreator(IClientProvider clientProvider)
+        public DocumentCreator(ILogger<DocumentCreator> logger, IClientProvider clientProvider)
         {
+            Logger = logger;
             Client = clientProvider.GetClient();
         }
 
@@ -22,19 +25,23 @@ namespace Cloudy.Cms.Addon.KubernetesCrd
         {
             var body = new
             {
-                metadata = new
-                {
-                    label = "lorem ipsum",
-                    name = "testcontent"
-                },
-                spec = new
-                {
-                    lorem = "ipsum"
-                }
+                apiVersion = "cloudy-cms.net/v1",
+                kind = $"cloudy{container}",
+                metadata = new { name = document.Id },
+                spec = document
             };
 
-            var result = await Client.CreateClusterCustomObjectAsync(JsonConvert.SerializeObject(body), "cloudy", "v1", "content").ConfigureAwait(false);
+            if (Logger.IsEnabled(LogLevel.Information))
+            {
+                Logger.LogInformation($"Sending to Kubernetes:\n\n{JsonConvert.SerializeObject(body)}");
+            }
 
+            var response = await Client.Http.PostAsync($"apis/cloudy-cms.net/v1/namespaces/default/cloudy{container}", new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json")).ConfigureAwait(false);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"{(int)response.StatusCode} {response.ReasonPhrase}: {await response.Content.ReadAsStringAsync().ConfigureAwait(false)}");
+            }
         }
     }
 }

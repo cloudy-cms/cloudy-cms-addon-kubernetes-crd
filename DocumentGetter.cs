@@ -20,9 +20,9 @@ namespace Cloudy.Cms.Addon.KubernetesCrd
 
         public async Task<Document> GetAsync(string container, string id)
         {
-            var result = (await Client.GetClusterCustomObjectAsync("cloudy", "v1", "content", id).ConfigureAwait(false)).ToString();
+            //var result = (await Client.GetClusterCustomObjectAsync("cloudy", "v1", "content", id).ConfigureAwait(false)).ToString();
 
-            return JsonConvert.DeserializeObject<Document>(result);
+            return JsonConvert.DeserializeObject<Document>(null);
         }
     }
 }

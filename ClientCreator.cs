@@ -18,7 +18,7 @@ namespace Cloudy.Cms.Addon.KubernetesCrd
 
         public KubeApiClient CreateClient()
         {
-            return KubeApiClient.Create(K8sConfig.Load().ToKubeClientOptions());
+            return KubeApiClient.Create(K8sConfig.Load().ToKubeClientOptions(null, "default"));
             //if (WebHostEnvironment.IsDevelopment())
             //{
             //    return KubeApiClient.Create(K8sConfig.Load().ToKubeClientOptions());

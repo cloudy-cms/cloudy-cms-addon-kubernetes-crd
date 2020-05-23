@@ -18,7 +18,7 @@ namespace Cloudy.Cms.Addon.KubernetesCrd
 
         public async Task DeleteAsync(string container, string id)
         {
-            await Client.DeleteClusterCustomObjectAsync(new k8s.Models.V1DeleteOptions(), "cloudy", "v1", "content", "testcontent").ConfigureAwait(false);
+            //await Client.DeleteClusterCustomObjectAsync(new k8s.Models.V1DeleteOptions(), "cloudy", "v1", "content", "testcontent").ConfigureAwait(false);
         }
     }
 }

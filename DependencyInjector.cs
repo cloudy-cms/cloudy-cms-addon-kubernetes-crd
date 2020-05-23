@@ -1,5 +1,6 @@
 ﻿using Cloudy.CMS.DependencyInjectionSupport;
 using Cloudy.CMS.DocumentSupport;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,17 +9,17 @@ namespace Cloudy.Cms.Addon.KubernetesCrd
 {
     public class DependencyInjector : IDependencyInjector
     {
-        public void InjectDependencies(IContainer container)
+        public void InjectDependencies(IServiceCollection services)
         {
-            container.RegisterSingleton<IClientCreator, ClientCreator>();
-            container.RegisterSingleton<IClientProvider, ClientProvider>();
-            container.RegisterTransient<IDocumentPropertyFinder, DocumentPropertyFinder>();
-            container.RegisterSingleton<IDocumentCreator, DocumentCreator>();
-            container.RegisterSingleton<IDocumentDeleter, DocumentDeleter>();
-            container.RegisterSingleton<IDocumentFinder, DocumentFinder>();
-            container.RegisterSingleton<IDocumentGetter, DocumentGetter>();
-            container.RegisterSingleton<IDocumentUpdater, DocumentUpdater>();
-            container.RegisterTransient<IDocumentFinderQueryBuilder, DocumentFinderQueryBuilder>();
+            services.AddSingleton<IClientCreator, ClientCreator>();
+            services.AddSingleton<IClientProvider, ClientProvider>();
+            services.AddTransient<IDocumentPropertyFinder, DocumentPropertyFinder>();
+            services.AddSingleton<IDocumentCreator, DocumentCreator>();
+            services.AddSingleton<IDocumentDeleter, DocumentDeleter>();
+            services.AddSingleton<IDocumentFinder, DocumentFinder>();
+            services.AddSingleton<IDocumentGetter, DocumentGetter>();
+            services.AddSingleton<IDocumentUpdater, DocumentUpdater>();
+            services.AddTransient<IDocumentFinderQueryBuilder, DocumentFinderQueryBuilder>();
         }
     }
 }
